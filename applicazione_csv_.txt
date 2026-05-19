@@ -53,25 +53,39 @@ void visualizzaDati(numerazioniciviche elenco[], int d) {
     }
 }
 
+void ordinaPerCivico(numerazioniciviche elenco[], int d) {
+    for (int i = 0; i < d - 1; i++) {
+        for (int j = 0; j < d - i - 1; j++) {
+            if (elenco[j].Numero > elenco[j + 1].Numero) {
+                numerazioniciviche temp = elenco[j];
+                elenco[j] = elenco[j + 1];
+                elenco[j + 1] = temp;
+            }
+        }
+    }
+}
+
 int main(int argc, char** argv) {
     numerazioniciviche elenco[1000]; 
     int d = 0;
     int cont;
 
     do {
-        cout << "menu" << endl;
-        cout << "1. carica i primi 1000 record" << endl;
-        cout << "2. visualizza i dati caricati" << endl;
-        cout << "0. fine programma" << endl;
+        cout << " menu " << endl;
+        cout << "1 - carica i primi 1000 record" << endl;
+        cout << "2 - visualizza i dati caricati" << endl;
+        cout << "0 - fine programma" << endl;
         cout << "Inserisci la funzione da fare: ";
         cin >> cont;
 
-        if (cont == 1) {
-            caricaDati(elenco, d); // Chiamata alla funzione di caricamento
-        }
-        
-        if (cont == 2) {
-            visualizzaDati(elenco, d); // Chiamata alla funzione di visualizzazione
+        switch (cont) {
+            case 1:
+                caricaDati(elenco, d);
+                break;
+                
+            case 2:
+                visualizzaDati(elenco, d);
+                break;
         }
 
     } while (cont != 0);
