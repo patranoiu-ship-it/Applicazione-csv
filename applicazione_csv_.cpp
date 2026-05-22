@@ -1,0 +1,120 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+
+using namespace std;
+
+struct location {
+    double lon;
+    double lat;
+};
+
+struct numerazioniciviche {
+    string ClasseToponimo;
+    string DescrizioneToponimo;
+    int Numero;
+    string Subalterno;
+    int CAP;
+    int SezioneISTAT;
+    double lon;
+    double lat;
+    location posto;
+};
+
+// Funzione per caricare i dati dal file nell'array
+void caricaDati(numerazioniciviche elenco[], int &d) {
+    string riga;
+    ifstream fileInput("Comune_Bergamo_-_Numerazione_civica.csv");
+
+    if (fileInput.is_open()) {
+        getline(fileInput, riga); // Salta l'intestazione
+        d = 0;
+        
+        while (getline(fileInput, riga) && d < 1000) {
+            elenco[d].DescrizioneToponimo = riga;
+            d++;
+        }
+        
+        fileInput.close();
+        cout << "hai caricato i 1000 record" << endl;
+    } else {
+        cout << "impossibile aprire il file" << endl;
+    }
+}
+
+// Funzione per visualizzare i dati a schermo
+void visualizzaDati(numerazioniciviche elenco[], int d) {
+    if (d == 0) {
+        cout << "devi caricare prima i record con l'opzione 1" << endl;
+    } else {
+        for (int i = 0; i < d; i++) {
+            cout << "record " << i + 1 << ": " << elenco[i].DescrizioneToponimo << endl;
+        }
+    }
+}
+
+void ordinaPerCivico(numerazioniciviche elenco[], int d) {
+    for (int i = 0; i < d - 1; i++) {
+        for (int j = 0; j < d - i - 1; j++) {
+            if (elenco[j].Numero > elenco[j + 1].Numero) {
+                numerazioniciviche temp = elenco[j];
+                elenco[j] = elenco[j + 1];
+                elenco[j + 1] = temp;
+            }
+        }
+    }
+}
+
+int cercaVia(numerazioniciviche elenco[], int n, string via) {
+    for (int i = 0; i < n; i++) {
+        if (elenco[i].DescrizioneToponimo == via) { 
+            return i; // Restituisce la posizione 
+        }
+    }
+    return -1; // restituisce -1 se non la trova
+}
+
+int main(int argc, char** argv) {
+    numerazioniciviche elenco[1000]; 
+    int d = 0;
+    int cont;
+
+    do {
+        cout << " menu " << endl;
+        cout << "1 - carica i primi 1000 record" << endl;
+        cout << "2 - visualizza i dati caricati" << endl;
+        cout << "3 - via inserita dall' utente" << endl;
+        cout << "0 - fine programma" << endl;
+        cout << "Inserisci la funzione da fare: ";
+        cin >> cont;
+
+        switch (cont) {
+            case 1:
+                caricaDati(elenco, d);
+                break;
+                
+            case 2:
+                visualizzaDati(elenco, d);
+                break;
+				
+            case 3: { 	
+                string viaDaCercare;
+                cout << "Inserisci il nome della via: ";
+                cin.ignore(); 
+                getline(cin, viaDaCercare);    
+                
+                int posizione = cercaVia(elenco, d, viaDaCercare);
+                
+                if (posizione == -1) {
+                    cout << "Via non trovata." << endl;
+                } else {
+                    cout << "Via trovata alla posizione: " << posizione << endl;
+                }
+                break;
+            } 
+        }
+
+    } while (cont != 0);
+
+    return 0;
+}
